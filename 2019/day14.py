@@ -178,29 +178,50 @@ def process_graph(graph, top_sort, fuel_req):
     return int(ore)
 
 
+class OreReactor:
+    def __init__(self):
+        self.graph = None
+        self.order = None
+
+    def process(self, fuel_req):
+        for node in self.order:
+            if node == 'FUEL':
+                req = fuel_req
+            else:
+                req = 0
+            self.graph.nodes[node]['required'] = req
+            produced = self.graph.nodes[node]['weight']
+            for parent, weight in self.graph[node].items():
+                w = weight['weight']
+                p_produced = self.graph.nodes[parent]['weight']
+                p_req = self.graph.nodes[parent]['required']
+                req += (w * p_req) / p_produced
+            req = round_up(req, produced)
+            self.graph.nodes[node]['required'] = req
+
+        ore = self.graph.nodes['ORE']['required']
+        return int(ore)
+
+
 def run1():
+    reactor = OreReactor()
     string = STRING
     data = parse_string(string)
 
-    graph = create_graph(data)
-    top_sort = list(reversed(list(nx.topological_sort(graph))))
-    total_ore = process_graph(graph, top_sort, 1)
-    return total_ore
+    reactor.graph = create_graph(data)
+    reactor.order = list(reversed(list(nx.topological_sort(reactor.graph))))
+    total_ore = reactor.process(1)
+    return reactor, total_ore
 
 
-def run2(ore_for_one_fuel):
-    string = STRING
-    data=  parse_string(string)
-
-    graph = create_graph(data)
-    top_sort = list(reversed(list(nx.topological_sort(graph))))
+def run2(ore_for_one_fuel, reactor: OreReactor):
     ore = 1e12
     min_fuel = ore / ore_for_one_fuel
     max_fuel = (ore / ore_for_one_fuel) * 4
     while max_fuel - min_fuel > 1:
         fuel_attempt = round((min_fuel + max_fuel) / 2)
-        ore_for_fuel_attempt = process_graph(graph, top_sort, fuel_attempt)
-        if ore_for_fuel_attempt <= 1e12:
+        ore_for_fuel_attempt = reactor.process(fuel_attempt)
+        if ore_for_fuel_attempt <= ore:
             min_fuel = fuel_attempt
         else:
             max_fuel = fuel_attempt
@@ -210,8 +231,8 @@ def run2(ore_for_one_fuel):
 
 if __name__ == "__main__":
     a = time.time()
-    f = run1()
-    g = run2(f)
+    reactor, ore = run1()
+    g = run2(ore, reactor)
     print(time.time() - a)
-    print(f"Ore for 1 fuel:", f)
+    print(f"Ore for 1 fuel:", ore)
     print(f"Max fuel:", g)
