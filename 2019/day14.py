@@ -123,13 +123,11 @@ class Reaction:
     def __init__(self):
         self.input = {}
         self.output = {}
-        self.fixed_quanity = True
 
 
 def parse_string(string):
     string = string.split('\n')
     reactions = []
-    fuel = None
     for s in string:
         r = Reaction()
 
@@ -141,12 +139,8 @@ def parse_string(string):
         for w in u:
             quant, element = w.strip().split(' ')
             r.input[element] = int(quant)
-            if math.gcd(int(amount), int(quant)) == 1:
-                r.fixed_quanity = False
         reactions.append(r)
-        if result == 'FUEL':
-            fuel = r
-    return reactions, fuel
+    return reactions
 
 
 def create_graph(data):
@@ -186,7 +180,7 @@ def process_graph(graph, top_sort, fuel_req):
 
 def run1():
     string = STRING
-    data, fuel_reaction = parse_string(string)
+    data = parse_string(string)
 
     graph = create_graph(data)
     top_sort = list(reversed(list(nx.topological_sort(graph))))
@@ -196,7 +190,7 @@ def run1():
 
 def run2(ore_for_one_fuel):
     string = STRING
-    data, fuel_reaction = parse_string(string)
+    data=  parse_string(string)
 
     graph = create_graph(data)
     top_sort = list(reversed(list(nx.topological_sort(graph))))
