@@ -31,7 +31,7 @@ def determine_movement(movement, output):
             return 3
         if movement == 3:
             return 1
-    if output in {1, 2}:
+    else:
         if movement == 1:
             return 3
         if movement == 3:
