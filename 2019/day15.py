@@ -31,7 +31,7 @@ def determine_movement(movement, output):
             return 3
         if movement == 3:
             return 1
-    if output == 1:
+    if output in {1, 2}:
         if movement == 1:
             return 3
         if movement == 3:
@@ -40,6 +40,7 @@ def determine_movement(movement, output):
             return 4
         if movement == 4:
             return 1
+
 
 def draw_walls(mappings, position, path):
     max_x = max(abs(x.real) for x in mappings)
@@ -110,7 +111,6 @@ def run1():
                 g.add_edge(x, y)
     p = nx.shortest_path_length(g, complex(0), oxygen)
     e = nx.eccentricity(g, v=oxygen)
-    print(oxygen)
     return p, e
 
 
