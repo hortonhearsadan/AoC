@@ -1,6 +1,3 @@
-import math
-from random import randint
-
 import networkx as nx
 
 from intcode import IntCodeCPU
@@ -43,9 +40,6 @@ def determine_movement(movement, output):
             return 4
         if movement == 4:
             return 1
-
-    return randint(1, 4)
-
 
 def draw_walls(mappings, position, path):
     max_x = max(abs(x.real) for x in mappings)
