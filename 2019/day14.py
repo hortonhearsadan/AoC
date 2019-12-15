@@ -119,6 +119,31 @@ TESTSTRING5 = '''171 ORE => 8 CNZTR
 5 BHXH, 4 VRPVC => 5 LTCX'''
 
 
+class OreReactor:
+    def __init__(self):
+        self.graph = None
+        self.order = None
+
+    def process(self, fuel_req):
+        for node in self.order:
+            if node == 'FUEL':
+                req = fuel_req
+            else:
+                req = 0
+            self.graph.nodes[node]['required'] = req
+            produced = self.graph.nodes[node]['weight']
+            for parent, weight in self.graph[node].items():
+                w = weight['weight']
+                p_produced = self.graph.nodes[parent]['weight']
+                p_req = self.graph.nodes[parent]['required']
+                req += (w * p_req) / p_produced
+            req = round_up(req, produced)
+            self.graph.nodes[node]['required'] = req
+
+        ore = self.graph.nodes['ORE']['required']
+        return int(ore)
+
+
 class Reaction:
     def __init__(self):
         self.input = {}
@@ -176,31 +201,6 @@ def process_graph(graph, top_sort, fuel_req):
 
     ore = graph.nodes['ORE']['required']
     return int(ore)
-
-
-class OreReactor:
-    def __init__(self):
-        self.graph = None
-        self.order = None
-
-    def process(self, fuel_req):
-        for node in self.order:
-            if node == 'FUEL':
-                req = fuel_req
-            else:
-                req = 0
-            self.graph.nodes[node]['required'] = req
-            produced = self.graph.nodes[node]['weight']
-            for parent, weight in self.graph[node].items():
-                w = weight['weight']
-                p_produced = self.graph.nodes[parent]['weight']
-                p_req = self.graph.nodes[parent]['required']
-                req += (w * p_req) / p_produced
-            req = round_up(req, produced)
-            self.graph.nodes[node]['required'] = req
-
-        ore = self.graph.nodes['ORE']['required']
-        return int(ore)
 
 
 def run1():
