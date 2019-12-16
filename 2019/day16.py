@@ -10,27 +10,27 @@ STRING = '''59766299734185935790261115703620877190381824215209853207763194576128
 
 
 def get_matrix(base_pattern, input_length):
-    matrix= np.zeros((input_length,input_length),dtype=int)
-    patterns=[]
+    matrix = np.zeros((input_length, input_length), dtype=int)
     for i in range(input_length):
-        pattern = np.repeat(base_pattern, i+1)
-        while len(pattern) < input_length +1:
-            pattern=np.append(pattern,pattern)
+        pattern = np.repeat(base_pattern, i + 1)
+        while len(pattern) < input_length + 1:
+            pattern = np.append(pattern, pattern)
 
-        matrix[i] = pattern[1:input_length+1]
+        matrix[i] = pattern[1:input_length + 1]
     return matrix
 
+
 def run1():
-    string=STRING
+    string = STRING
     input_signal = np.array(list(string), dtype=int)
-    base_pattern = np.array([0,1,0,-1],dtype=int)
-    input_length= len(input_signal)
+    base_pattern = np.array([0, 1, 0, -1], dtype=int)
+    input_length = len(input_signal)
     base_pattern_matrix = get_matrix(base_pattern, input_length)
-    for i in range (100):
+    for i in range(100):
         output_signal = base_pattern_matrix.dot(input_signal)
-        input_signal = np.remainder(np.absolute(output_signal),10)
-    pass
+        input_signal = np.remainder(np.absolute(output_signal), 10)
     return ''.join(str(x) for x in input_signal[:8])
+
 
 def run2():
     string = TESTSTRING5
@@ -44,7 +44,7 @@ def run2():
         output_signal = base_pattern_matrix.dot(input_signal)
         input_signal = np.remainder(np.absolute(output_signal), 10)
     pass
-    return input_signal[offset:offset+8]
+    return input_signal[offset:offset + 8]
 
 
 if __name__ == "__main__":
