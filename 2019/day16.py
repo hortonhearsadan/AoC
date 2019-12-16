@@ -38,14 +38,13 @@ def run1():
 def run2():
     string = STRING
     offset = int(string[:7])
-    string = string * 10000
     input_signal = np.fromstring(string, dtype=np.int8) - 48
+    input_signal = np.tile(input_signal, 10000)
     reduced_input = input_signal[offset:][::-1]
-
     for i in range(100):
         new_input = np.cumsum(reduced_input)
-        reduced_input = np.remainder(np.absolute(new_input), 10)
-    return ''.join(str(x) for x in reduced_input[::-1][:8])
+        reduced_input = np.remainder(new_input, 10)
+    return ''.join(str(x) for x in np.absolute(reduced_input[::-1][:8]))
 
 
 if __name__ == "__main__":
