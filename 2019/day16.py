@@ -1,4 +1,5 @@
 import time
+
 import numpy as np
 
 TESTSTRING = '''12345678'''
@@ -37,23 +38,14 @@ def run1():
 def run2():
     string = STRING
     offset = int(string[:7])
-
     string = string * 10000
-    input_signal = np.array(list(string), dtype=int)
-    # base_pattern = np.array([0, 1, 0, -1], dtype=int)
-    input_length = len(input_signal)
-    # base_pattern_matrix = get_matrix(base_pattern, input_length)
-    reduced_input = input_signal[offset:]
-    new_input = np.zeros(len(reduced_input), dtype=int)
-    r_len = len(reduced_input)
+    input_signal = np.fromstring(string, dtype=np.int8) - 48
+    reduced_input = input_signal[offset:][::-1]
+
     for i in range(100):
-        unsum=0
-        n_sum = np.sum(reduced_input)
-        for j in range(r_len):
-            new_input[j] = n_sum - unsum
-            unsum += reduced_input[j]
+        new_input = np.cumsum(reduced_input)
         reduced_input = np.remainder(np.absolute(new_input), 10)
-    return ''.join(str(x) for x in reduced_input[:8])
+    return ''.join(str(x) for x in reduced_input[::-1][:8])
 
 
 if __name__ == "__main__":
