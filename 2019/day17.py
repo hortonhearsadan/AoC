@@ -1,5 +1,4 @@
 import time
-from collections import defaultdict
 
 from computer import Computer
 
@@ -70,54 +69,139 @@ def parse_string(string):
     pass
 
 
+class Movement:
+    def __init__(self, letter, string_instr):
+        self._id = letter
+        self.string_istr = string_instr
+        self.instructions = list(string_instr.encode())
+
+
 def get_adjacent(x):
     return {x + 1, x - 1, x + 1j, x - 1j}
+
+
+class Scaffold:
+    def __init__(self):
+        self.scaffolds = None
+        self.gaps = None
+        self.robot_pos = None
+        self.alignment = None
+        self.image = None
+        self.robot = None
 
 
 def run1():
     # string = TESTSTRING
     # string = parse_string(string)
-    robot = Computer(codes)
-    robot.program()
-    outputs = robot.outputs
-    hashes = set()
-    dots = []
+    scaffold = Scaffold()
+
+    scaffold.robot = Computer(codes)
+    scaffold.robot.program()
+    outputs = scaffold.robot.outputs
+    scaffold.hashes = set()
+    scaffold.dots = []
     point = complex(0)
     position = 0
     for i, o in enumerate(outputs):
         if o == 35:
-            hashes.add(point + position)
+            scaffold.hashes.add(point + position)
             position += 1
 
         elif o == 46:
-            dots.append(point + position)
+            scaffold.dots.append(point + position)
             position += 1
 
         elif o == 10:
-            point -= 1j
+            point += 1j
             position = 0
         elif o != 'X':
-            hashes.add(point + position)
+            scaffold.hashes.add(point + position)
+            scaffold.robot_pos = point + position, o
             position += 1
 
     ixn = []
-    for h in hashes:
+    for h in scaffold.hashes:
         x = get_adjacent(h)
-        if len(x & hashes) >= 3:
+        if len(x & scaffold.hashes) >= 3:
             ixn.append(h)
+    ship = draw_walls(scaffold.hashes, complex(0), scaffold.dots, scaffold.robot_pos)
+    scaffold.alignment = sum(i.real * abs(i.imag) for i in set(ixn))
+    [print(''.join(y)) for y in ship]
 
-    alignment_params = sum(i.real * abs(i.imag) for i in set(ixn))
-    return alignment_params
+    return scaffold
 
 
-def run2():
-    pass
+def draw_walls(mappings, position, path, special=None):
+    max_x = max(abs(x.real) for x in mappings)
+    max_y = max(abs(x.imag) for x in mappings)
+    walls = [[' ' for x in range(int(2 * max_x + 2))] for y in range(int(2 * max_y + 2))]
+
+    start_x = 1
+    start_y = 1
+
+    for m in mappings:
+        x = start_x + m.real
+        y = start_y + m.imag
+        # print(x,y)
+        walls[int(y)][int(x)] = "#"
+
+    # for p in path:
+    #     x = start_x + p.real
+    #     y = start_y + p.imag
+    #     # print(x,y)
+    #     walls[int(y)][int(x)] = "."
+
+    if special:
+        x = start_x + special[0].real
+        y = start_y + special[0].imag
+        walls[int(y)][int(x)] = chr(special[1])
+
+    # o_x = start_x + position.real
+    # o_y = start_y + position.imag
+    # walls[int(o_y)][int(o_x)] = '$'
+    # walls[int(start_y)][int(start_x)] = 'O'
+
+    return walls
+
+
+def run2(scaff):
+    a = Movement('A', 'L,10,R,8,R,8\n')
+    b = Movement('B', 'L,10,L,12,R,8,R,10\n')
+    c = Movement('C', 'R,10,L,12,R,10\n')
+
+
+    path = 'A,A,B,C,B,C,B,C,C,A\n'
+    path = list(path.encode())
+    scaff.robot = Computer(codes)
+    scaff.robot.codes[0] = 2
+    scaff.robot.program()
+    scaff.robot.add_inputs(path)
+    scaff.robot.program()
+    scaff.robot.add_inputs(a.instructions)
+    scaff.robot.program()
+
+    scaff.robot.add_inputs(b.instructions)
+    scaff.robot.program()
+
+    scaff.robot.add_inputs(c.instructions)
+    scaff.robot.program()
+    scaff.robot.add_inputs([ord('n'),ord('\n')])
+    output =  scaff.robot.program()
+    return output
 
 
 if __name__ == "__main__":
     a = time.time()
     f = run1()
-    g = run2()
+    g = run2(f)
     print(time.time() - a)
-    print(f"Part 1", f)
+    print(f"Part 1", f.alignment)
     print(f"Part 2", g)
+
+# L,10,R,8,R,8
+#
+#'R,10,L,12,R,10\n'
+#
+# 'L,10,L,12,R,8,R,10\n'
+#
+#'L',10,'L',12,'R',8,'R',10,'R',10,'L',12,'R',10,'L',10,'L',12,'R',8,'R',10,'R',10,'L',12,'R',10,'L',10,'L',12,'R',8,'R',10,'R',10,'L',12,'R',10,'R',10,'L',12,'R',10
