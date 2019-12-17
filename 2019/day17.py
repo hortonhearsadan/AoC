@@ -64,6 +64,7 @@ codes = [1, 330, 331, 332, 109, 3492, 1101, 1182, 0, 15, 1101, 1483, 0, 24, 1002
 TESTSTRING = ''''''
 STRING = ''''''
 
+
 class Movement:
     def __init__(self, letter, string_instr):
         self._id = letter
@@ -127,7 +128,7 @@ def run1():
 def draw_walls(mappings, position, path, special=None):
     max_x = max(abs(x.real) for x in mappings)
     max_y = max(abs(x.imag) for x in mappings)
-    walls = [[' ' for x in range(int(2 * max_x + 2))] for y in range(int(2 * max_y + 2))]
+    walls = [[' ' for x in range(int(max_x + 2))] for y in range(int(max_y + 2))]
 
     start_x = 1
     start_y = 1
@@ -147,8 +148,7 @@ def draw_walls(mappings, position, path, special=None):
 
 
 def run2(scaff):
-
-    #By hand because i suck
+    # By hand because i suck
     a = Movement('A', 'L,10,R,8,R,8\n')
     b = Movement('B', 'L,10,L,12,R,8,R,10\n')
     c = Movement('C', 'R,10,L,12,R,10\n')
@@ -168,8 +168,8 @@ def run2(scaff):
 
     scaff.robot.add_inputs(c.instructions)
     scaff.robot.program()
-    scaff.robot.add_inputs([ord('n'),ord('\n')])
-    output =  scaff.robot.program()
+    scaff.robot.add_inputs([ord('y'), ord('\n')])
+    output = scaff.robot.program()
     return output
 
 
@@ -183,8 +183,8 @@ if __name__ == "__main__":
 
 # L,10,R,8,R,8
 #
-#'R,10,L,12,R,10\n'
+# 'R,10,L,12,R,10\n'
 #
 # 'L,10,L,12,R,8,R,10\n'
 #
-#'L',10,'L',12,'R',8,'R',10,'R',10,'L',12,'R',10,'L',10,'L',12,'R',8,'R',10,'R',10,'L',12,'R',10,'L',10,'L',12,'R',8,'R',10,'R',10,'L',12,'R',10,'R',10,'L',12,'R',10
+# 'L',10,'L',12,'R',8,'R',10,'R',10,'L',12,'R',10,'L',10,'L',12,'R',8,'R',10,'R',10,'L',12,'R',10,'L',10,'L',12,'R',8,'R',10,'R',10,'L',12,'R',10,'R',10,'L',12,'R',10
