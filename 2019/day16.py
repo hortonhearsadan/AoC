@@ -38,13 +38,13 @@ def run1():
 def run2():
     string = STRING
     offset = int(string[:7])
-    input_signal = np.fromstring(string, dtype=np.int8) - 48
+    input_signal = np.fromstring(string, dtype=np.int8) - 48  # weird fromstring behaviour so I minus 48 from each entry
     input_signal = np.tile(input_signal, 10000)
-    reduced_input = input_signal[offset:][::-1]
+    reduced_input = input_signal[offset:][::-1]  # flip the array to work backwards
     for i in range(100):
-        new_input = np.cumsum(reduced_input)
-        reduced_input = np.remainder(new_input, 10)
-    return ''.join(str(x) for x in np.absolute(reduced_input[::-1][:8]))
+        new_input = np.cumsum(reduced_input)  # a phase is the cumulative sum of the previous phase
+        reduced_input = np.remainder(new_input, 10)  # full array mod
+    return ''.join(str(x) for x in reduced_input[::-1][:8])  # did have np.absolute here but it wasnt required
 
 
 if __name__ == "__main__":
