@@ -64,11 +64,6 @@ codes = [1, 330, 331, 332, 109, 3492, 1101, 1182, 0, 15, 1101, 1483, 0, 24, 1002
 TESTSTRING = ''''''
 STRING = ''''''
 
-
-def parse_string(string):
-    pass
-
-
 class Movement:
     def __init__(self, letter, string_instr):
         self._id = letter
@@ -91,8 +86,6 @@ class Scaffold:
 
 
 def run1():
-    # string = TESTSTRING
-    # string = parse_string(string)
     scaffold = Scaffold()
 
     scaffold.robot = Computer(codes)
@@ -145,30 +138,20 @@ def draw_walls(mappings, position, path, special=None):
         # print(x,y)
         walls[int(y)][int(x)] = "#"
 
-    # for p in path:
-    #     x = start_x + p.real
-    #     y = start_y + p.imag
-    #     # print(x,y)
-    #     walls[int(y)][int(x)] = "."
-
     if special:
         x = start_x + special[0].real
         y = start_y + special[0].imag
         walls[int(y)][int(x)] = chr(special[1])
 
-    # o_x = start_x + position.real
-    # o_y = start_y + position.imag
-    # walls[int(o_y)][int(o_x)] = '$'
-    # walls[int(start_y)][int(start_x)] = 'O'
-
     return walls
 
 
 def run2(scaff):
+
+    #By hand because i suck
     a = Movement('A', 'L,10,R,8,R,8\n')
     b = Movement('B', 'L,10,L,12,R,8,R,10\n')
     c = Movement('C', 'R,10,L,12,R,10\n')
-
 
     path = 'A,A,B,C,B,C,B,C,C,A\n'
     path = list(path.encode())
