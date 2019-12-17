@@ -33,7 +33,7 @@ class Instruction:
 class Computer:
     def __init__(self, codes):
         self.inputs = []
-        self.codes = codes + [0] * 2000
+        self.codes = codes + [0] * 20000
         self.outputs = []
         self.halted = False
         self.ptr = 0
