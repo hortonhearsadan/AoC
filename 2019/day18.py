@@ -1,8 +1,8 @@
 import itertools
 import time
+from collections import defaultdict
 
 import networkx as nx
-import numpy as np
 
 from utils import get_adjacent
 
@@ -88,7 +88,7 @@ tunnels = '''###################################################################
 #.....#.........#...........#...........#.#.......#.#.......#.................#.#
 #################################################################################'''
 
-testunnel='''########################
+testunnel = '''########################
 #f.D.E.e.C.b.A.@.a.B.c.#
 ######################.#
 #d.....................#
@@ -98,52 +98,83 @@ testunnel='''########################
 def reduce_graph(g, letters_pos):
     combinations = list(itertools.combinations(letters_pos, 2))
     letter_graph = nx.Graph()
+    path_dict = defaultdict(list)
     for u, v in combinations:
-        weight = nx.shortest_path_length(g, u, v)
-        letter_graph.add_edge(u, v, weight=weight)
-    return letter_graph
+        path = nx.shortest_path(g, u, v)
+        path_dict[frozenset(sorted((u, v)))] = [p for p in path if type(p) != complex]
+        letter_graph.add_edge(u, v, weight=len(path) - 1)
+    return letter_graph, path_dict
+
+
+def get_graph(points):
+    g = nx.Graph()
+    for p in points:
+        adj = get_adjacent(p)
+        for q in adj & points:
+            g.add_edge(p, q)
+    return g
+
+
+def get_points(tunnel_array):
+    poi = {}
+    points = set()
+    for i, x in enumerate(tunnel_array):
+        for j, y in enumerate(x):
+            c = complex(j, -i)
+            if y == '#':
+                continue
+            points.add(c)
+            if y != '.':
+                poi[y] = c
+
+    return points, poi
+
+
+def get_paths(g, keys, poi, ):
+    paths = {}
+    combinations = list(itertools.combinations(keys | {'@'}, 2))
+    for s, t in combinations:
+        source = poi[s]
+        target = poi[t]
+        p = nx.shortest_path(g, source, target)
+        paths[(source, target)] = p
+        paths[(target, source)] = p
+    return paths
+
+
+def get_key_graph(paths, doors_pos, poi_inv):
+    g = nx.Graph()
+    for pair, path in paths.items():
+        path_doors_pos = doors_pos & set(path)
+        path_doors =set(poi_inv[pd] for pd in path_doors_pos)
+        g.add_edge(pair[0],pair[1], weight = len(path)-1, doors = path_doors)
+
+    return g
+
+
+
 
 def run1():
     string = testunnel
-    string = string.split('\n')
-    tunnel_array = np.array([list(s) for s in string])
-    rows,columns = tunnel_array.shape
-    paths = set()
-    doors = set()
-    keys = set()
-    position = 0
-    letters = {}
-    for i in range(rows):
+    # string = string.split('\n')
+    tunnel_array = [list(s) for s in string.split('\n')]
 
-        for j in range(columns):
-            e = tunnel_array[i, j]
-            c = complex(j, -i)
-            if e == '#':
-                continue
-            paths.add(c)
-            if e == '@':
-                position = c
-            elif e != '.':
-                letters[e]=c
-                if e == e.upper():
-                    doors.add(c)
+    points, poi = get_points(tunnel_array)
+    keys = set(k for k in poi.keys() if k.lower() == k and k != '@')
+    poi_inv = {v:k for k,v in poi.items()}
+    doors = set(k for k in poi.keys() if k.upper() ==k and k !='@')
+    doors_pos = set(poi[d] for d in doors)
 
-                elif e == e.lower():
-                    keys.add(c)
-    g = nx.Graph()
-    for p in paths:
-        adj = get_adjacent(p)
-        for a in adj & paths:
-            g.add_edge(p, a)
+    graph = get_graph(points)
+    paths = get_paths(graph, keys, poi, )
 
-    letters_pos = keys | doors | {position}
-    letter_graph = reduce_graph(g,letters_pos)
-
-    valid_nodes = keys
-
-    s = nx.subgraph(letter_graph,keys)
-    
-    pass
+    key_graph = get_key_graph(paths, doors_pos, poi_inv)
+    node = poi['@']
+    unlocked_doors = set()
+    # while True:
+    #     adj_nodes = key_graph[node]
+    #     for new_node, attrs in adj_nodes.items():
+    #         if
 
 
 
