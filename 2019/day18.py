@@ -1,10 +1,8 @@
 import itertools
 import time
-from collections import defaultdict
+from collections import defaultdict, deque
 
 import networkx as nx
-
-from utils import get_adjacent
 
 tunnels = '''#################################################################################
 #.........#q..#.......................#.#.....................#...#.............#
@@ -95,15 +93,8 @@ testunnel = '''########################
 ########################'''
 
 
-def reduce_graph(g, letters_pos):
-    combinations = list(itertools.combinations(letters_pos, 2))
-    letter_graph = nx.Graph()
-    path_dict = defaultdict(list)
-    for u, v in combinations:
-        path = nx.shortest_path(g, u, v)
-        path_dict[frozenset(sorted((u, v)))] = [p for p in path if type(p) != complex]
-        letter_graph.add_edge(u, v, weight=len(path) - 1)
-    return letter_graph, path_dict
+def get_adjacent(x):
+    return {x + 1, x - 1, x + 1j, x - 1j}
 
 
 def get_graph(points):
@@ -146,12 +137,10 @@ def get_key_graph(paths, doors_pos, poi_inv):
     g = nx.Graph()
     for pair, path in paths.items():
         path_doors_pos = doors_pos & set(path)
-        path_doors =set(poi_inv[pd] for pd in path_doors_pos)
-        g.add_edge(pair[0],pair[1], weight = len(path)-1, doors = path_doors)
+        path_doors = set(poi_inv[pd] for pd in path_doors_pos)
+        g.add_edge(pair[0], pair[1], weight=len(path) - 1, doors=path_doors)
 
     return g
-
-
 
 
 def run1():
@@ -161,8 +150,8 @@ def run1():
 
     points, poi = get_points(tunnel_array)
     keys = set(k for k in poi.keys() if k.lower() == k and k != '@')
-    poi_inv = {v:k for k,v in poi.items()}
-    doors = set(k for k in poi.keys() if k.upper() ==k and k !='@')
+    poi_inv = {v: k for k, v in poi.items()}
+    doors = set(k for k in poi.keys() if k.upper() == k and k != '@')
     doors_pos = set(poi[d] for d in doors)
 
     graph = get_graph(points)
