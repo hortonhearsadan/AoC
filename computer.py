@@ -39,6 +39,7 @@ class Computer:
         self.ptr = 0
         self.paused = False
         self.relative_base = 0
+        self.save_state= codes + [0] * 20000
 
     def value(self, program, arg, mode):
         if mode == Mode.VALUE:
@@ -62,10 +63,10 @@ class Computer:
     def add_input(self, input: int):
         self.inputs.append(input)
 
-    def program(self):
+    def program(self, reset=False):
         output = None
-        # program = self.codes + [0] * 2000
-        program = self.codes
+        program = self.codes + [0] * 2000
+        # program = self.codes
         while program[self.ptr] != Op.HALT:
             code = program[self.ptr]
             self.ptr += 1
@@ -109,6 +110,11 @@ class Computer:
                 return None
         if program[self.ptr] == Op.HALT:
             self.halted = True
+        if reset:
+            self.codes = self.save_state
+            self.ptr =0
+            self.relative_base = 0
+            self.halted = False
         return output
 
     def _add(self, instr):
