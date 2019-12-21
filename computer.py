@@ -65,8 +65,8 @@ class Computer:
 
     def program(self, reset=False):
         output = None
-        program = self.codes + [0] * 2000
-        # program = self.codes
+        # program = self.codes + [0] * 2000
+        program = self.codes
         while program[self.ptr] != Op.HALT:
             code = program[self.ptr]
             self.ptr += 1
