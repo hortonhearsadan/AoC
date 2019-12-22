@@ -1,6 +1,6 @@
 import time
 from collections import defaultdict
-
+import itertools
 import networkx as nx
 
 from utils import open_file
@@ -40,7 +40,7 @@ def parse_instructions(string):
             instructions.append(Instruction(i, None, input, output.strip()))
 
         elif len(input) == 2:
-            instructions.append(Instruction(i, op=input[0], inputs=input[1], output=output.strip()))
+            instructions.append(Instruction(i, op=input[0], inputs=[input[1]], output=output.strip()))
         elif len(input) == 3:
             instructions.append(Instruction(i, op=input[1], inputs=[input[0], input[2]], output=output.strip()))
     return instructions
@@ -62,10 +62,9 @@ def run1():
     outputs = defaultdict(list)
     inputs = defaultdict(list)
     instruction_dict = {}
-    valuedict = {}
+    v = {}
     for i in instructions:
         outputs[i.output].append(i)
-        valuedict[i.output] = 0
         for j in i.letter_inputs:
             inputs[j].append(i)
 
@@ -73,36 +72,111 @@ def run1():
 
     graph = get_graph(instructions, outputs, inputs)
     order = list(nx.topological_sort(graph))
+    # cycle = nx.find_cycle(graph)
+    # nodes = list(itertools.chain(*cycle))
+    # nodes = nodes[::2]
+    # for n in nodes:
+    #     print(instruction_dict[n].inputs, instruction_dict[n].output,'-----', string[n-1])
 
     for i in order:
         instr = instruction_dict[i]
         inputs = instr.inputs
         o = instr.output
         op = instr.op
+        x = inputs[0]
+        if len(inputs) > 1:
+            y = inputs[1]
         if op is None:
-            valuedict[o] = int(inputs[0])
+            if x.isdigit():
+                v[o] = int(inputs[0])
+            else:
+                v[o] = v[x]
         elif op == 'LSHIFT':
-            valuedict[o] = valuedict[inputs[0]] >> int(inputs[1])
+            v[o] = v[inputs[0]] << int(inputs[1])
         elif op == 'RSHIFT':
-            valuedict[o] = valuedict[inputs[0]] << int(inputs[1])
+            v[o] = v[inputs[0]] >> int(inputs[1])
         elif op == 'AND':
-            valuedict[o] = valuedict[inputs[0]] & valuedict[inputs[1]]
+            if y.isdigit():
+                v_y = int(inputs[1])
+            else:
+                v_y = v[y]
+            if x.isdigit():
+                v_x = int(inputs[0])
+            else:
+                v_x = v[x]
+            v[o] = v_x & v_y
         elif op == 'NOT':
-            valuedict[o] = ~ valuedict[inputs[0]] % 65536
+            v[o] = ~ v[inputs[0]] % 65536
         elif op == 'OR':
-            valuedict[o] = valuedict[inputs[0]] | valuedict[inputs[1]]
+            v[o] = v[inputs[0]] | v[inputs[1]]
 
-    return valuedict['a']
+    return v['a']
 
 
-def run2():
-    pass
+def run2(override):
+    string = open_file(day, year)
+    instructions = parse_instructions(string)
+    outputs = defaultdict(list)
+    inputs = defaultdict(list)
+    instruction_dict = {}
+    v = {}
+    for i in instructions:
+        outputs[i.output].append(i)
+        for j in i.letter_inputs:
+            inputs[j].append(i)
+
+        instruction_dict[i.id] = i
+
+    graph = get_graph(instructions, outputs, inputs)
+    order = list(nx.topological_sort(graph))
+    # cycle = nx.find_cycle(graph)
+    # nodes = list(itertools.chain(*cycle))
+    # nodes = nodes[::2]
+    # for n in nodes:
+    #     print(instruction_dict[n].inputs, instruction_dict[n].output,'-----', string[n-1])
+
+    for i in order:
+        instr = instruction_dict[i]
+        inputs = instr.inputs
+        o = instr.output
+        op = instr.op
+        x = inputs[0]
+        if len(inputs) > 1:
+            y = inputs[1]
+        if op is None:
+            if o == 'b':
+                v[o] = override
+            else:
+                if x.isdigit():
+                    v[o] = int(inputs[0])
+                else:
+                    v[o] = v[x]
+        elif op == 'LSHIFT':
+            v[o] = v[inputs[0]] << int(inputs[1])
+        elif op == 'RSHIFT':
+            v[o] = v[inputs[0]] >> int(inputs[1])
+        elif op == 'AND':
+            if y.isdigit():
+                v_y = int(inputs[1])
+            else:
+                v_y = v[y]
+            if x.isdigit():
+                v_x = int(inputs[0])
+            else:
+                v_x = v[x]
+            v[o] = v_x & v_y
+        elif op == 'NOT':
+            v[o] = ~ v[inputs[0]] % 65536
+        elif op == 'OR':
+            v[o] = v[inputs[0]] | v[inputs[1]]
+
+    return v['a']
 
 
 if __name__ == "__main__":
     a = time.time()
     f = run1()
-    g = run2()
+    g = run2(f)
     print(time.time() - a)
     print(f"Part 1", f)
     print(f"Part 2", g)
