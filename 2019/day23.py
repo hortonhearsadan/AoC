@@ -102,6 +102,62 @@ TEST_STRING2 = ''''''
 TEST_STRING3 = ''''''
 
 
+class Nat:
+    def __init__(self, address):
+        self.address = address
+        self.current_packet = None
+        self.last_delivered_packet = None
+
+    @property
+    def freeze(self):
+        return self.last_delivered_packet and self.current_packet.y == self.last_delivered_packet.y
+
+
+class Network:
+    def __init__(self, hosts):
+        self.hosts = 50
+        self.nat = Nat(255)
+        self.dhcp_table = None
+        self.active_packet = None
+        self.packet_queue = {i: [] for i in range(hosts)}
+
+    def generate_dhcp_table(self):
+        return {h: Computer(codes) for h in range(self.hosts)}
+
+    def is_idle(self):
+        return all(q == [] for a, q in self.packet_queue.items())
+
+    def process_queue(self, address):
+        if self.packet_queue[address]:
+            return self.packet_queue[address].pop(0).as_list
+        return [-1]
+
+    def queue_new_packets(self, new_packets):
+        for i in range(int(len(new_packets) / 3)):
+
+            addr, x, y = new_packets[3 * i:3 * i + 3]
+            packet = Packet(x, y)
+
+            if addr == self.nat.address:
+                if self.nat.current_packet is None:
+                    print('Part 1:', y)
+                self.nat.current_packet = packet
+
+            else:
+                self.packet_queue[addr].append(packet)
+
+    def assess_should_continue(self):
+        if self.nat.freeze:
+            print('Part 2:', self.nat.current_packet.y)
+            return False
+        self.jump_start()
+        return True
+
+    def jump_start(self):
+        self.packet_queue[0].append(self.nat.current_packet)
+        self.nat.last_delivered_packet = self.nat.current_packet
+
+
 class Packet:
     def __init__(self, x, y):
         self.x = x
@@ -112,83 +168,32 @@ class Packet:
         return [self.x, self.y]
 
 
-def run1():
-    message_queue = {i: [] for i in range(50)}
-    address_book = {i: Computer(codes) for i in range(50)}
-    for address, cpu in address_book.items():
-        cpu.add_input(address)
-        cpu.program()
-
-    addr = -1
-    while addr != 255:
-        for address, cpu in address_book.items():
-            if message_queue[address]:
-                inp = message_queue[address].pop(0)
-                cpu.add_inputs(inp.as_list)
-            else:
-                cpu.add_input(-1)
-            cpu.program()
-            messages = cpu.outputs.copy()
-            if messages:
-                for i in range(int(len(messages) / 3)):
-
-                    addr, x, y = messages[3 * i:3 * i + 3]
-                    if addr == 255:
-                        return y
-
-                    message_queue[addr].append(Packet(x, y))
-                    cpu.clear_outputs()
+def connect_hosts(dhcp_table):
+    for address, host in dhcp_table.items():
+        host.add_input(address)
+        host.program()
 
 
-def is_idle(message_queue):
-    return all(q == [] for a, q in message_queue.items() if a != 255)
+def run_network():
+    network = Network(50)
+    network.dhcp_table = network.generate_dhcp_table()
+    connect_hosts(network.dhcp_table)
 
-
-class Nat:
-    def __init__(self):
-        self.current_packet = None
-        self.last_delivered_packet = None
-
-
-def run2():
-    message_queue = {i: [] for i in range(300)}
-    address_book = {i: Computer(codes) for i in range(50)}
-    for address, cpu in address_book.items():
-        cpu.add_input(address)
-        cpu.program()
-    nat_address = 255
-    nat = Nat()
     while True:
-        for address, cpu in address_book.items():
-            if message_queue[address]:
-                for m in message_queue[address]:
-                    inp = message_queue[address].pop(0)
-                    cpu.add_inputs(inp.as_list)
-            else:
-                cpu.add_input(-1)
-            cpu.program()
-            messages = cpu.outputs.copy()
-            if messages:
-                for i in range(int(len(messages) / 3)):
-                    addr, x, y = messages[3 * i:3 * i + 3]
-                    packet = Packet(x, y)
-                    if addr == nat_address:
-                        nat.current_packet = packet
-                    else:
-                        message_queue[addr].append(packet)
-
-                    cpu.clear_outputs()
-        if is_idle(message_queue):
-            if nat.last_delivered_packet and nat.current_packet.y == nat.last_delivered_packet.y:
-                return nat.current_packet.y
-            message_queue[0].append(nat.current_packet)
-            nat.last_delivered_packet = nat.current_packet
+        for address, host in network.dhcp_table.items():
+            host.add_inputs(network.process_queue(address))
+            host.program()
+            new_packets = host.outputs.copy()
+            if new_packets:
+                network.queue_new_packets(new_packets)
+                host.clear_outputs()
+            if network.is_idle():
+                cont = network.assess_should_continue()
+                if not cont:
+                    return
 
 
 if __name__ == "__main__":
     start_time = time.time()
-    f = run1()
-    g = run2()
-    print(f"Part 1:", f)
-    print(f"Part2:", g)
+    run_network()
     print(time.time() - start_time)
