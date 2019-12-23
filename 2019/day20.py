@@ -6,7 +6,7 @@ import networkx as nx
 
 from utils import *
 
-STRING = '''                                       D             Y       C       W     K   D                                             
+STRING = """                                       D             Y       C       W     K   D                                             
                                        Y             K       J       S     K   F                                             
   #####################################.#############.#######.#######.#####.###.###########################################  
   #...#...#.....#.#.........................#.#.......#.....#...#.......#...#...........#...#.#.#.....#...#.......#.#.....#  
@@ -136,9 +136,9 @@ FI..#.....#.#...#.........#.#.#...#                                             
   #...#.#.....#...#.#...#.....#...#.........#.........#.......#.......#...#...#...#.......#.#.#...#...#...#...#.#.....#.#.#  
   #######################################.###.#####.#####.#######.#######.#######.#####.###################################  
                                          I   A     I     H       Z       U       B     P                                     
-                                         N   A     T     J       S       W       Y     C                                     '''
+                                         N   A     T     J       S       W       Y     C                                     """
 
-TEST_STRING = '''         A           
+TEST_STRING = """         A           
          A           
   #######.#########  
   #######.........#  
@@ -156,8 +156,8 @@ DE..#######...###.#
 FG..#########.....#  
   ###########.#####  
              Z       
-             Z       '''
-TEST_STRING2 = '''                   A               
+             Z       """
+TEST_STRING2 = """                   A               
                    A               
   #################.#############  
   #.#...#...................#.#.#  
@@ -193,27 +193,26 @@ YN......#               VT..#....QG
   #.#.........#...#.............#  
   #########.###.###.#############  
            B   J   C               
-           U   P   P               '''
-TEST_STRING3 = ''''''
+           U   P   P               """
+TEST_STRING3 = """"""
+
 
 def get_points(tunnel_array):
     warp = {}
-    walls=set()
+    walls = set()
     points = set()
     for i, x in enumerate(tunnel_array):
         for j, y in enumerate(x):
             c = complex(j, -i)
-            if y == '#':
+            if y == "#":
                 walls.add(c)
 
-            elif y == '.':
+            elif y == ".":
                 points.add(c)
             elif y.isalpha():
                 warp[c] = y
 
     return points, warp, walls
-
-
 
 
 def get_tunnel_graph(points, warps):
@@ -223,37 +222,36 @@ def get_tunnel_graph(points, warps):
     for p in points:
         adj = get_adjacent(p)
         adj_2 = get_2_adjacent(p)
-        for x in adj &points:
-            g.add_edge(p,x)
-        for s,t in adj_2:
+        for x in adj & points:
+            g.add_edge(p, x)
+        for s, t in adj_2:
             if s in warp_set and t in warp_set:
-                label = ''.join((warps[s],warps[t]))
-                if label == 'AA':
+                label = "".join((warps[s], warps[t]))
+                if label == "AA":
                     start = p
-                elif label =='ZZ':
-                    end= p
+                elif label == "ZZ":
+                    end = p
                 else:
                     warp_paths[label].add(p)
 
     for w, ps in warp_paths.items():
 
-        combs = list(itertools.combinations(ps,2))
-        for c,d in combs:
-            g.add_edge(c,d)
+        combs = list(itertools.combinations(ps, 2))
+        for c, d in combs:
+            g.add_edge(c, d)
 
-    return g, start,end
-
+    return g, start, end
 
 
 def run1():
     string = STRING
     # string = string.split('\n')
-    tunnel_array = [list(s) for s in string.split('\n')]
+    tunnel_array = [list(s) for s in string.split("\n")]
 
     points, warps, walls = get_points(tunnel_array)
-    graph, source, target = get_tunnel_graph(points,warps)
+    graph, source, target = get_tunnel_graph(points, warps)
 
-    return nx.shortest_path_length(graph,source,target)
+    return nx.shortest_path_length(graph, source, target)
 
 
 def run2():
