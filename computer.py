@@ -181,3 +181,6 @@ class Computer:
         offset = self.value(instr.program, arg1, instr.mode1)
         self.relative_base += offset
         self.ptr += 1
+
+    def clear_outputs(self):
+        self.outputs = []
