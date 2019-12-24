@@ -1,3 +1,4 @@
+import json
 import re
 
 
@@ -29,6 +30,10 @@ def open_file(day, year):
     else:
         return string
 
+def open_file_json(day,year):
+    with open(f'../inputs/input{day}{year}') as f:
+        data = json.load(f)
+    return data
 
 def has_double_letter(s):
     for i in range(len(s) - 1):
