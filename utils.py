@@ -44,3 +44,11 @@ def has_double_letter(s):
 def increment(s,n):
     return chr(ord(s)+n)
 
+def get_group_size(packages, target):
+    j = 0
+    t = 0
+    for i in packages:
+        j += 1
+        t += i
+        if t >= target:
+            return j
