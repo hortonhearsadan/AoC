@@ -4,7 +4,6 @@ import time
 import networkx as nx
 
 from utils import *
-import dwave_networkx as dw
 
 STRING = ''''''
 
