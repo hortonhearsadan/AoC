@@ -13,8 +13,7 @@ def run1():
     string = open_file(3, 2016)
     valid_triangles = []
     for s in string:
-        s = list(filter(None, s.split(' ')))
-        triangle = [int(i) for i in s]
+        triangle = chunk(s)
         if sum(triangle) > 2 * max(triangle):
             valid_triangles.append(triangle)
     return len(valid_triangles)
