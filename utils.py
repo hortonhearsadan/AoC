@@ -30,10 +30,12 @@ def open_file(day, year):
     else:
         return string
 
-def open_file_json(day,year):
+
+def open_file_json(day, year):
     with open(f'../inputs/input{day}{year}') as f:
         data = json.load(f)
     return data
+
 
 def has_double_letter(s):
     for i in range(len(s) - 1):
@@ -41,8 +43,15 @@ def has_double_letter(s):
             return True
     return False
 
-def increment(s,n):
-    return chr(ord(s)+n)
+
+def increment(s, n):
+    return chr(ord(s) + n)
+
+
+def increment_bounded(s, n):
+
+    return chr(97 + ((ord(s) % 96) + n- 1) % 26)
+
 
 def get_group_size(packages, target):
     j = 0

@@ -1,7 +1,7 @@
 import time
 from collections import Counter
 
-from utils import open_file
+from utils import open_file, increment_bounded
 
 day = 0
 year = 0
@@ -43,8 +43,24 @@ def run1():
     return sum(real_sectors)
 
 def run2():
-    pass
+    string = open_file(4, 2016)
+    rooms = []
+    for t in string:
+        s = t.replace(']\n', '').replace('[', '-').split('-')
+        check_sum = s[-1]
+        sector_code = int(s[-2])
+        code = ' '.join(s[:-2])
+        # if check(check_sum, code):
+        rooms.append((code,sector_code))
 
+    decryptions = []
+    for room, rotation in rooms:
+        decrypt = []
+        for word in room.split(' '):
+            w = ''.join(increment_bounded(x,rotation) for x in word)
+            decrypt.append(w)
+        if 'northpole' in decrypt:
+            return rotation
 
 if __name__ == "__main__":
     a = time.time()
