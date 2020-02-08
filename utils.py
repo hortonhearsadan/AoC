@@ -18,6 +18,10 @@ def get_adjacent(x):
     return {x + 1, x - 1, x + 1j, x - 1j}
 
 
+def get_adjacent_with_diag(x):
+    return {x + 1, x - 1, x + 1j, x - 1j, x + 1 + 1j, x + 1 - 1j, x - 1 - 1j, x - 1 + 1j}
+
+
 def get_2_adjacent(x):
     return {(x + 1, x + 2), (x - 2, x - 1), (x + 2j, x + 1j), (x - 1j, x - 2j)}
 
@@ -49,8 +53,7 @@ def increment(s, n):
 
 
 def increment_bounded(s, n):
-
-    return chr(97 + ((ord(s) % 96) + n- 1) % 26)
+    return chr(97 + ((ord(s) % 96) + n - 1) % 26)
 
 
 def get_group_size(packages, target):
