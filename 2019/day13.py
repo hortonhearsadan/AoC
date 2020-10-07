@@ -218,7 +218,7 @@ def run2():
         dir = game.move_joystick()
         game.cpu.add_input(dir)
 
-        # [print((" ".join(x))) for x in game.map]
+        [print((" ".join(x))) for x in game.map]
 
     return game.score
 

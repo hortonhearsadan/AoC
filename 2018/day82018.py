@@ -9,25 +9,50 @@ def parse_string():
         string = file.readline()
 
     string = string.split(' ')
-    tree_nums = list(string)
+    tree_nums = [int(s) for s in string]
     return tree_nums
 
 
 class Node:
-    def __init__(self, num_child_nodes, num_meta):
+    def __init__(self, start_position, num_child_nodes, num_meta):
+        self.start_position= start_position
         self.num_child_nodes = num_child_nodes
         self.num_meta_entries = num_meta
         self.meta_data = None
+        self.child_node=[]
+
+    @property
+    def has_no_children(self):
+        return self.num_child_nodes == 0
+
+def get_node_from_header(idx,nums):
+    return Node(idx, nums[idx],nums[idx+1])
 
 
-def run1():
-    nums = parse_string()
-    header_index = 0
+def parse(data):
+    children, metas = data[:2]
+    data = data[2:]
+    scores = []
+    totals = 0
 
-    root_node = Node(nums[header_index], nums[header_index + 1])
-    meta_data_index = - root_node.num_meta_entries
-    root_node.meta_data = nums[- root_node.num_meta_entries:]
-    
+    for i in range(children):
+        total, score, data = parse(data)
+        totals += total
+        scores.append(score)
+
+    totals += sum(data[:metas])
+
+    if children == 0:
+        return (totals, sum(data[:metas]), data[metas:])
+    else:
+        return (
+            totals,
+            sum(scores[k - 1] for k in data[:metas] if k > 0 and k <= len(scores)),
+            data[metas:]
+        )
+
+
+
 
 
 def run2():
@@ -36,8 +61,8 @@ def run2():
 
 if __name__ == "__main__":
     a = time.time()
-    f = run1()
-    g = run2()
+    total, value, remaining = parse(parse_string())
+    # g = run2()
     print(time.time() - a)
-    print(f"sleepiest_guard id * minutes asleep", f)
-    print(f"guard id * minutes asleep:", g)
+    print('part 1:', total)
+    print('part 2:', value)
