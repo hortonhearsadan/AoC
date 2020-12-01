@@ -38,5 +38,5 @@ if __name__ == "__main__":
     f = run1()
     g = run2()
     print(time.time() - a)
-    print(f"Part 1", f)
-    print(f"Part 2", g)
+    print(f"Part 1: {f}")
+    print(f"Part 2: {g}")
