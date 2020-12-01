@@ -1,8 +1,6 @@
 import time
 from itertools import combinations
 
-from utils import open_file
-
 day = 1
 year = 2020
 
