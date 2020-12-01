@@ -22,19 +22,17 @@ def parse_nums():
 
 
 def run1():
-    numbers = parse_nums()
-
     return sum(i * j for i, j in combinations(numbers, 2) if i + j == 2020)
 
 
 def run2():
-    numbers = parse_nums()
-
     return sum(i * j * k for i, j, k in combinations(numbers, 3) if i + j + k == 2020)
 
 
 if __name__ == "__main__":
     a = time.time()
+    numbers = parse_nums()
+
     f = run1()
     g = run2()
     print(time.time() - a)
