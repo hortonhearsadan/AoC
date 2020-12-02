@@ -36,14 +36,14 @@ def parse_input():
         #cleaner but slower
 
         # m=remove_excess_and_filter_none(i,', |_|-|:| |\n')
-        # least,most,letter,pw = m
+        # least, most, letter, pw = m
 
-        #cleaner but slower
-        # m = re.match(r'(?P<least>.*)-(?P<most>.*) (?P<letter>.*): (?P<pw>.*)',i)
+        #cleaner but slower again
+        # m = re.match(r'(?P<least>.*)-(?P<most>.*) (?P<letter>.*): (?P<pw>[a-z]*)',i)
         # least = int(m.group('least'))
         # most = int(m.group('most'))
         # letter = m.group('letter')
-        # pw = m.group('pw').replace("\n", "")
+        # pw = m.group('pw')
 
         ppw.append(PolicyPW(int(least), int(most), letter, pw))
     return ppw
