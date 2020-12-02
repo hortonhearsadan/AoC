@@ -49,5 +49,5 @@ if __name__ == "__main__":
     f = run1(input)
     g = run2(input)
     print(f"Runtime: {time.time() - a}")
-    print(f"Part 1", f)
-    print(f"Part 2", g)
+    print(f"Part 1: {f}")
+    print(f"Part 2: {g}")
