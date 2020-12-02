@@ -1,5 +1,6 @@
+import re
 import time
-from utils import open_file
+from utils import open_file, remove_excess_and_filter_none
 
 day = 2
 year = 2020
@@ -31,6 +32,19 @@ def parse_input():
         t = s[0].split(" ")
         letter = t[1]
         least, most = t[0].split("-")
+
+        #cleaner but slower
+
+        # m=remove_excess_and_filter_none(i,', |_|-|:| |\n')
+        # least,most,letter,pw = m
+
+        #cleaner but slower
+        # m = re.match(r'(?P<least>.*)-(?P<most>.*) (?P<letter>.*): (?P<pw>.*)',i)
+        # least = int(m.group('least'))
+        # most = int(m.group('most'))
+        # letter = m.group('letter')
+        # pw = m.group('pw').replace("\n", "")
+
         ppw.append(PolicyPW(int(least), int(most), letter, pw))
     return ppw
 

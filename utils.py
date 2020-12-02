@@ -11,7 +11,7 @@ def remove_character(string: str, char):
 
 
 def remove_excess_and_filter_none(string: str, regs):
-    return filter(None, re.split(regs, string))
+    return list(filter(None, re.split(regs, string)))
 
 
 def get_adjacent(x):
