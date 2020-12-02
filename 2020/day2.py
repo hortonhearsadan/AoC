@@ -36,11 +36,11 @@ def parse_input():
 
 
 def run1(inputs):
-    return len([p for p in inputs if p.is_valid_1()])
+    return sum(p.is_valid_1() for p in inputs)
 
 
 def run2(inputs):
-    return len([p for p in inputs if p.is_valid_2()])
+    return sum(p.is_valid_2() for p in inputs)
 
 
 if __name__ == "__main__":
