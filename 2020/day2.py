@@ -48,6 +48,6 @@ if __name__ == "__main__":
     input = parse_input()
     f = run1(input)
     g = run2(input)
-    print(time.time() - a)
+    print(f"Runtime: {time.time() - a}")
     print(f"Part 1", f)
     print(f"Part 2", g)
