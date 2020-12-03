@@ -18,6 +18,6 @@ if __name__ == "__main__":
     a = time.time()
     f = run1()
     g = run2()
-    print(f"Runtime: {time.time() - a}")
+    print(f"Runtime: {round((time.time() - a)*1000,3)}ms")
     print(f"Part 1: {f}")
     print(f"Part 2: {g}")
