@@ -44,13 +44,14 @@ class Passport:
         )
 
     def byr_is_valid(self):
-        return number_range_validation(1920, 2002, int, self.byr)
+
+        return len(self.byr) == 4 and number_range_validation(1920, 2002, int, self.byr)
 
     def iyr_is_valid(self):
-        return number_range_validation(2010, 2020, int, self.iyr)
+        return len(self.iyr) == 4 and number_range_validation(2010, 2020, int, self.iyr)
 
     def eyr_is_valid(self):
-        return number_range_validation(2020, 2030, int, self.eyr)
+        return len(self.eyr) == 4 and number_range_validation(2020, 2030, int, self.eyr)
 
     def hgt_is_valid(self):
         unit = self.hgt[-2:]
@@ -74,19 +75,6 @@ class Passport:
 
     def pid_is_valid(self):
         return len(self.pid) == 9 and self.pid.isdigit()
-
-    @classmethod
-    def from_dict(cls, pp_dict):
-        return Passport(
-            byr=pp_dict["byr"],
-            iyr=pp_dict["iyr"],
-            eyr=pp_dict["eyr"],
-            hgt=pp_dict["hgt"],
-            hcl=pp_dict["hcl"],
-            ecl=pp_dict["ecl"],
-            pid=pp_dict["pid"],
-            cid=pp_dict.get("cid"),
-        )
 
 
 def number_range_validation(lower, upper, type_, number):
@@ -123,7 +111,7 @@ def run1(inputs):
                 continue
             k, v = j.split(":")
             pp_dict[k] = v
-        valid_passports.append(Passport.from_dict(pp_dict))
+        valid_passports.append(Passport(**pp_dict))
 
     return valid_passports
 
