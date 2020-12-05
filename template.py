@@ -6,6 +6,9 @@ year = 0
 TESTSTRING = ''''''
 STRING = ''''''
 
+def parse_input():
+    pass
+
 def run1():
     pass
 

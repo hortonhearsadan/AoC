@@ -31,9 +31,7 @@ class Seat:
 
 def parse_input():
     inputs = open_file(5, 2020)
-    seats = []
-    for i in inputs:
-        seats.append(Seat(i.strip()))
+    seats = [Seat(i.strip()) for i in inputs]
     return seats
 
 
@@ -52,6 +50,7 @@ if __name__ == "__main__":
     inputs = parse_input()
     f = run1(inputs)
     g = run2(f)
-    print(f"Runtime: {round((time.time() - a)*1000,3)}ms")
+
     print(f"Part 1: {max(f)}")
     print(f"Part 2: {g}")
+    print(f"Runtime: {round((time.time() - a)*1000,3)}ms")
