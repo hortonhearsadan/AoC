@@ -10,7 +10,6 @@ STRING = """"""
 
 class Seat:
     def __init__(self, code):
-        self.code = code
         self.row = code[:7]
         self.column = code[7:]
 
@@ -43,8 +42,9 @@ def run1(seats):
 
 
 def run2(ids):
-    free = set(range(15, 1017)) - set(ids)
-    return next(s for s in free if not (s + 1 in free or s - 1 in free))
+    ids = set(ids)
+    free_seats = set(range(15, 1017)) - ids
+    return next(s for s in free_seats if (s + 1 in ids and s - 1 in ids))
 
 
 if __name__ == "__main__":
