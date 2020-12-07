@@ -1,7 +1,8 @@
 import time
 from utils import open_file
-day = 0
-year = 0
+dir_path = __file__.split('/')
+day = int(dir_path[-1][3:-3])
+year = int(dir_path[-2])
 
 TESTSTRING = ''''''
 STRING = ''''''
