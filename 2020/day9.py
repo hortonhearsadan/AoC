@@ -38,8 +38,8 @@ def parse_input():
 
 def run1(nums, preamble):
     i = 0
-    pre_nums=deque(nums[i:preamble])
-    nums=iter(nums[preamble:])
+    pre_nums = deque(nums[i:preamble])
+    nums = iter(nums[preamble:])
     while True:
         target = next(nums)
         if any(target - n in pre_nums for n in pre_nums):
@@ -52,12 +52,15 @@ def run1(nums, preamble):
 def run2(nums, number):
     dnums = deque()
     nums = iter(nums)
+    s = 0
     while True:
-        s = sum(dnums)
         if s < number:
-            dnums.append(next(nums))
+            t = next(nums)
+            dnums.append(t)
+            s += t
         elif s > number:
-            dnums.popleft()
+            t = dnums.popleft()
+            s -= t
         else:
             return min(dnums) + max(dnums)
 
