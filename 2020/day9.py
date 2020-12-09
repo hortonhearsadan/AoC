@@ -38,13 +38,13 @@ def parse_input():
 
 def run1(nums, preamble):
     i = 0
-    j = preamble
+    pre_nums=deque(nums[i:preamble])
+    nums=iter(nums[preamble:])
     while True:
-        pre_nums = nums[i:j]
-        target = nums[j]
-        if any(i + j == target for i, j in combinations(pre_nums, 2)):
-            i += 1
-            j += 1
+        target = next(nums)
+        if any(target - n in pre_nums for n in pre_nums):
+            pre_nums.append(target)
+            pre_nums.popleft()
         else:
             return target
 
