@@ -37,8 +37,7 @@ def parse_input():
 
 
 def run1(nums, preamble):
-    i = 0
-    pre_nums = deque(nums[i:preamble])
+    pre_nums = deque(nums[:preamble])
     nums = iter(nums[preamble:])
     while True:
         target = next(nums)
