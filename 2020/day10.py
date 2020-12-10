@@ -73,19 +73,22 @@ def run2(voltages):
         diff = j-i
         if abs(diff) <=3:
             g.add_edge(*sorted((i,j)))
-    print(len(g.nodes()),len(g.edges()))
-    # return sum(1 for i in nx.all_simple_paths(g, outlet,device,cutoff=98))
-    c=dfs(g,outlet,device)
+    voltages = sorted(voltages)
+    cs = [voltages[v] for v in range(len(voltages)-1) if voltages[v+1] - voltages[v] ==3]
 
-    return c
+    cs = [outlet] + cs +[device]
+    count = 1
+    for s,t  in zip(cs,cs[1:]):
+        count *= dfs(g,s,t)
+        # count *= len(list(nx.all_simple_paths(g,s,t)))
+    return count
+
 
 def dfs(g,u, t):
     if u == t:
         return 1
     else:
-        # if not u.npaths:
-        # assume sum returns 0 if u has no children
-        npaths = sum(dfs(g,c, t) for c in list(g[1]))
+        npaths = sum(dfs(g,c, t) for c in list(g[u]))
         return npaths
 
 if __name__ == "__main__":
