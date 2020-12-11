@@ -20,18 +20,18 @@ def run1(plan):
     plan = np.pad(plan, [(1, 1), (1, 1)], "constant", constant_values=".")
     next_plan = plan.copy()
     while True:
-        for i, j in enumerate(plan[1:-1], 1):
-            for k, l in enumerate(j[1:-1], 1):
-                adj = plan[i - 1 : i + 2, k - 1 : k + 2]
+        for row_idx, row in enumerate(plan[1:-1], 1):
+            for col_idx, seat in enumerate(row[1:-1], 1):
+                adj = plan[row_idx - 1 : row_idx + 2, col_idx - 1 : col_idx + 2]
                 occupied = np.count_nonzero(adj == "#")
 
-                if l == "L":
+                if seat == "L":
                     if occupied == 0:
-                        next_plan[i, k] = "#"
+                        next_plan[row_idx, col_idx] = "#"
 
-                elif l == "#":
+                elif seat == "#":
                     if occupied >= 5:
-                        next_plan[i, k] = "L"
+                        next_plan[row_idx, col_idx] = "L"
 
         if not np.array_equal(plan, next_plan):
             plan = next_plan.copy()
