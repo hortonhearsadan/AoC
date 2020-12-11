@@ -27,131 +27,124 @@ def parse_input():
 
 
 def run1(plan):
-    plan = np.pad(plan, [(1, 1), (1, 1)], "constant", constant_values=".")
+    plan = np.pad(plan, [(1, 1), (1, 1)], "constant", constant_values="F")
     while True:
         next_plan_full = []
         next_plan_free = []
 
         for row_idx, row in enumerate(plan[1:-1], 1):
-                for col_idx, seat in enumerate(row[1:-1], 1):
-                    if seat == '.':
-                        continue
-                    adj = plan[row_idx - 1 : row_idx + 2, col_idx - 1 : col_idx + 2]
-                    occupied = np.count_nonzero(adj == "#")
+            for col_idx, seat in enumerate(row[1:-1], 1):
+                if seat == ".":
+                    continue
+                adj = plan[row_idx - 1 : row_idx + 2, col_idx - 1 : col_idx + 2]
+                occupied = np.count_nonzero(adj == "#")
 
-                    if seat == "L":
-                        if occupied == 0:
-                            next_plan_full.append((row_idx,col_idx))
+                if seat == "L":
+                    if occupied == 0:
+                        next_plan_full.append((row_idx, col_idx))
 
-                    elif seat == "#":
-                        if occupied >= 5:
-                            next_plan_free.append((row_idx,col_idx))
+                elif seat == "#":
+                    if occupied >= 5:
+                        next_plan_free.append((row_idx, col_idx))
 
         if next_plan_free or next_plan_full:
             for y,x in next_plan_free:
                 plan[y,x] = 'L'
             for y, x in next_plan_full:
-                plan[y,x] = '#'
+                plan[y, x] = "#"
 
         else:
             return np.count_nonzero(plan == "#")
 
 
-def count_occupied(plan,row,col):
-    h,w= plan.shape
-    left = plan[row,:col][::-1]
-    right = plan[row,col+1:]
-    up = plan[:row,col][::-1]
-    down = plan[row+1:,col]
+def look(x):
+    if x == ".":
+        return False, False
+    elif x == "#":
+        return True, True
+    else:
+        return True, False
+
+
+
+def count_occupied(plan, row, col):
+    h, w = plan.shape
+    left = plan[row, :col][::-1]
+    right = plan[row, col + 1:]
+    up = plan[:row, col][::-1]
+    down = plan[row + 1:, col]
     count = 0
 
-    for i in range(1,min(row,col)+1):
-        x = plan[row-i,col-i]
-        if x=='.':
-            continue
-        elif x =='#':
-            count+=1
-            break
-        else:
+    for i in range(1, w):
+        x = plan[row - i, col - i]
+        stop,add = look(x)
+        if stop:
+            if add:
+                count+=1
             break
 
-    for i in range(1,min(h-row,w-col)):
-        x = plan[row+i,col+i]
-        if x=='.':
-            continue
-        elif x =='#':
-            count+=1
-            break
-        else:
+    for i in range(1, w):
+        x = plan[row + i, col + i]
+        stop,add = look(x)
+        if stop:
+            if add:
+                count+=1
             break
 
-    for i in range(1,min(h-row,col)):
-        x=plan[row+i,col-i]
-        if x=='.':
-            continue
-        elif x =='#':
-            count+=1
-            break
-        else:
+    for i in range(1, w):
+        x = plan[row + i, col - i]
+        stop,add = look(x)
+        if stop:
+            if add:
+                count+=1
             break
 
-    for i in range(1,min(row,w-col)):
-        x=plan[row-i,col+i]
-        if x=='.':
-            continue
-        elif x =='#':
-            count+=1
-            break
-        else:
+    for i in range(1, w):
+        x = plan[row - i, col + i]
+        stop,add = look(x)
+        if stop:
+            if add:
+                count+=1
             break
 
-# lu = [plan[row-i,col-i] for i in range(1,min(row,col)+1)]
-    # rd = [plan[row+i,col+i] for i in range(1,min(h-row,w-col))]
-    # ld = [plan[row+i,col-i] for i in range(1,min(h-row,col))]
-    # ru = [plan[row-i,col+i] for i in range(1,min(row,w-col))]
-
-    for sight in [left,right,up,down]:
+    for sight in [left, right, up, down]:
         for seat in sight:
-            if seat =='.':
-                continue
-            elif seat =='#':
-                count +=1
-                break
-            else:
+            stop,add = look(seat)
+            if stop:
+                if add:
+                    count+=1
                 break
     return count
 
 
 def run2(plan):
-    plan = np.pad(plan, [(1, 1), (1, 1)], "constant", constant_values=".")
+    plan = np.pad(plan, [(1, 1), (1, 1)], "constant", constant_values="F")
     while True:
         next_plan_full = []
         next_plan_free = []
 
         for row_idx, row in enumerate(plan[1:-1], 1):
-                for col_idx, seat in enumerate(row[1:-1], 1):
-                    if seat == '.':
-                        continue
-                    occupied = count_occupied(plan,row_idx,col_idx)
+            for col_idx, seat in enumerate(row[1:-1], 1):
+                if seat == ".":
+                    continue
+                occupied = count_occupied(plan, row_idx, col_idx)
 
-                    if seat == "L":
-                        if occupied == 0:
-                            next_plan_full.append((row_idx,col_idx))
+                if seat == "L":
+                    if occupied == 0:
+                        next_plan_full.append((row_idx, col_idx))
 
-                    elif seat == "#":
-                        if occupied >= 5:
-                            next_plan_free.append((row_idx,col_idx))
+                elif seat == "#":
+                    if occupied >= 5:
+                        next_plan_free.append((row_idx, col_idx))
 
         if next_plan_free or next_plan_full:
-            for y,x in next_plan_free:
-                plan[y,x] = 'L'
+            for y, x in next_plan_free:
+                plan[y, x] = "L"
             for y, x in next_plan_full:
-                plan[y,x] = '#'
+                plan[y, x] = "#"
 
         else:
             return np.count_nonzero(plan == "#")
-
-
 
 
 if __name__ == "__main__":
