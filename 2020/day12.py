@@ -39,7 +39,7 @@ def parse_input():
 def run1(data):
     position1 = complex(0)
     position2 = complex(0)
-    waypoint = complex(10,1)
+    waypoint = complex(10, 1)
     current_dir = "E"
     for d in data:
         dir = d[0]
@@ -58,15 +58,15 @@ def run1(data):
             current_dir = reverse_dirs[dirs[current_dir] * turn]
             waypoint *= turn
 
-    part1 =abs(position1.real) + abs(position1.imag)
+    part1 = abs(position1.real) + abs(position1.imag)
     part2 = abs(position2.real) + abs(position2.imag)
-    return part1,part2
+    return part1, part2
 
 
 if __name__ == "__main__":
     a = time.time()
     inputs = parse_input()
-    f,g = run1(inputs)
+    f, g = run1(inputs)
     # g = run2(inputs)
     # f,g=0,0
     print(f"Part 1: {f}")
