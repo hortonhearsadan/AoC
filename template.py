@@ -10,7 +10,7 @@ STRING = ''''''
 def parse_input():
     pass
 
-def run1():
+def run1(inputs):
     pass
 
 
@@ -20,8 +20,9 @@ def run2():
 
 if __name__ == "__main__":
     a = time.time()
-    f = run1()
-    g = run2()
+    inputs = parse_input()
+    f = run1(inputs)
+    g = run2(inputs)
     print(f"Part 1: {f}")
     print(f"Part 2: {g}")
     print(f"Runtime: {round((time.time() - a)*1000,3)}ms")
