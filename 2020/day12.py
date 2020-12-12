@@ -30,53 +30,45 @@ def parse_input():
     f = open_file(day, year)
     # f=TESTSTRING.split('\n')
     inputs = []
-    for s in f:
-        inputs.append(Move(s.strip()))
-    return inputs
+    # for s in f:
+    #     inputs.append(Move(s.strip()))
+    # return inputs
+    return f
 
 
 def run1(data):
-    position = complex(0)
+    position1 = complex(0)
+    position2 = complex(0)
+    waypoint = complex(10,1)
     current_dir = "E"
     for d in data:
-        dir = d.direction
-        v = d.value
+        dir = d[0]
+        v = int(d[1:])
         if dir in {"N", "E", "S", "W"}:
-            position += v * dirs[dir]
+            action = v * dirs[dir]
+            position1 += action
+            waypoint += action
 
         elif dir == "F":
-            position += v * dirs[current_dir]
-
-        elif dir in ("L", "R"):
-            current_dir = reverse_dirs[dirs[current_dir] * ((dirs[dir]) ** (v / 90))]
-
-    return abs(position.real) + abs(position.imag)
-
-
-def run2(data):
-    position = complex(0)
-    waypoint = complex(10, 1)
-
-    for d in data:
-        dir = d.direction
-        v = d.value
-        if dir in {"N", "E", "S", "W"}:
-            waypoint += v * dirs[dir]
-
-        elif dir == "F":
-            position += v * waypoint
+            position1 += v * dirs[current_dir]
+            position2 += v * waypoint
 
         elif dir in {"L", "R"}:
-            waypoint *= (dirs[dir]) ** (v / 90)
+            turn = (dirs[dir]) ** (v / 90)
+            current_dir = reverse_dirs[dirs[current_dir] * turn]
+            waypoint *= turn
 
-    return abs(position.real) + abs(position.imag)
+    part1 =abs(position1.real) + abs(position1.imag)
+    part2 = abs(position2.real) + abs(position2.imag)
+    return part1,part2
 
 
 if __name__ == "__main__":
     a = time.time()
     inputs = parse_input()
-    f = run1(inputs)
-    g = run2(inputs)
+    f,g = run1(inputs)
+    # g = run2(inputs)
+    # f,g=0,0
     print(f"Part 1: {f}")
     print(f"Part 2: {g}")
     print(f"Runtime: {round((time.time() - a)*1000,3)}ms")
