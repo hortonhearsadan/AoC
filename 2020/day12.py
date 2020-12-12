@@ -15,24 +15,12 @@ R90
 F11"""
 STRING = """"""
 
-
-class Move:
-    def __init__(self, s):
-        self.direction = s[0]
-        self.value = int(s[1:])
-
-
 dirs = {"N": 1j, "S": -1j, "E": 1, "W": -1, "L": 1j, "R": -1j}
 reverse_dirs = {1j: "N", -1j: "S", 1: "E", -1: "W"}
 
 
 def parse_input():
     f = open_file(day, year)
-    # f=TESTSTRING.split('\n')
-    inputs = []
-    # for s in f:
-    #     inputs.append(Move(s.strip()))
-    # return inputs
     return f
 
 
