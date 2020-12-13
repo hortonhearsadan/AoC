@@ -1,5 +1,9 @@
 import time
 from utils import open_file
+import numpy as np
+import networkx as nx
+import scipy as sp
+
 dir_path = __file__.split('/')
 day = int(dir_path[-1][3:-3])
 year = int(dir_path[-2])
@@ -8,13 +12,17 @@ TESTSTRING = ''''''
 STRING = ''''''
 
 def parse_input():
+    f = open_file(day,year)
+    inputs =[]
+
+
+    return inputs
+
+def run1(data):
     pass
 
-def run1(inputs):
-    pass
 
-
-def run2():
+def run2(data):
     pass
 
 
