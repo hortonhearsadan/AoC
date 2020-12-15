@@ -2,9 +2,6 @@ import time
 from functools import reduce
 
 from utils import open_file
-import numpy as np
-import networkx as nx
-import scipy as sp
 
 dir_path = __file__.split("/")
 day = int(dir_path[-1][3:-3])
@@ -37,37 +34,14 @@ def parse_input():
 
 
 def run1(data):
-    return reduce(
-        lambda x, y: x * y,
-        min(
-            ((bus - data.arrival % bus, bus) for bus in data.buses), key=lambda x: x[0]
-        ),
-    )
+    return reduce(lambda x, y: x * y, min(((bus - data.arrival % bus, bus) for bus in data.buses), key=lambda x: x[0]))
 
 
 def run2(data):
 
-    # seed = 0
-    # inc = data.buses[0]
-    # for bus_idx, bus in zip(data.idx[1:],data.buses[1:]):
-    #     while True:
-    #         seed += inc
-    #         if (seed + bus_idx) % bus == 0:
-    #             print(seed)
-    #             break
-    #     inc *= bus
-    # return seed
+    n = reduce(lambda x, y: x * y, data.buses)
+    return sum((y - x) * n // y * pow(n // y, y - 2, y) for x, y in zip(data.idx, data.buses))% n
 
-    n = 1
-    t = 0
-
-    for y in data.buses:
-        n *= y
-
-    for x, y in zip(data.idx, data.buses):
-        b = n // y
-        t += (y - x) * b * pow(b, y - 2, y)
-    return t % n
 
 
 if __name__ == "__main__":
