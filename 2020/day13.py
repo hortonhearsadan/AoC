@@ -38,7 +38,6 @@ def run1(data):
 
 
 def run2(data):
-
     n = reduce(lambda x, y: x * y, data.buses)
     return sum((y - x) * n // y * pow(n // y, y - 2, y) for x, y in zip(data.idx, data.buses))% n
 
