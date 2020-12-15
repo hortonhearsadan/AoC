@@ -1,4 +1,6 @@
 import time
+from functools import reduce
+
 from utils import open_file
 import numpy as np
 import networkx as nx
@@ -35,16 +37,12 @@ def parse_input():
 
 
 def run1(data):
-    arr = data.arrival
-    best_waiting = 99999
-    best_bus = 0
-    for bus in data.buses:
-        r = arr%bus
-        waiting = bus - r
-        if waiting < best_waiting:
-            best_waiting = waiting
-            best_bus = bus
-    return best_waiting * best_bus
+    return reduce(
+        lambda x, y: x * y,
+        min(
+            ((bus - data.arrival % bus, bus) for bus in data.buses), key=lambda x: x[0]
+        ),
+    )
 
 
 def run2(data):
@@ -68,7 +66,7 @@ def run2(data):
 
     for x, y in zip(data.idx, data.buses):
         b = n // y
-        t += (y-x) * b * pow(b, y - 2, y)
+        t += (y - x) * b * pow(b, y - 2, y)
     return t % n
 
 
