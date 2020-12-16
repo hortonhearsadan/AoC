@@ -1,10 +1,13 @@
 import json
 import re
+from functools import reduce
 
 
 def split_string(string: str, sep):
     return string.split(sep)
 
+def prod(iterable):
+    return reduce(lambda x, y: x*y, iterable)
 
 def remove_character(string: str, char):
     return string.replace(char, '')
