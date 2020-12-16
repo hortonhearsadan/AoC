@@ -93,7 +93,7 @@ def add_mask_2(addr, mask):
             r[i] = m
 
     floats = [i for i, f in enumerate(r) if f == "X"]
-    for i in range(int("1" * len(floats), 2) + 1):
+    for i in range(2 ** len(floats) + 1):
         perm = bitify(i, len(floats))
         new_r = get_loc(r, floats, perm)
         locs.append(new_r)
