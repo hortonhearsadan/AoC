@@ -1,18 +1,20 @@
+import itertools
 import time
 from utils import open_file, get_adjacent_with_diag
 
-dir_path = __file__.split('/')
+dir_path = __file__.split("/")
 day = int(dir_path[-1][3:-3])
 year = int(dir_path[-2])
 
-TESTSTRING = '''.#.
+TESTSTRING = """.#.
 ..#
-###'''
-STRING = ''''''
+###"""
+STRING = """"""
+
 
 class Qrtn:
-    def __init__(self,slice,c):
-        self.z =slice
+    def __init__(self, slice, c):
+        self.z = slice
         self.c = c
 
     def __repr__(self):
@@ -29,63 +31,75 @@ class Qrtn:
     def __eq__(self, o):
         return self.c == o.c and self.z == o.z
 
-
     def __hash__(self):
-        return hash((self.z,self.c))
+        return hash((self.z, self.c))
+
 
 def get_adjacent(qrtn):
     adj = get_adjacent_with_diag(qrtn.c)
-    slices = {qrtn.z +1, qrtn.z -1}
-    adjacent = {Qrtn(s,qrtn.c) for s in slices}
-    adjacent |= {Qrtn(qrtn.z,i) for i in get_adjacent_with_diag(qrtn.c)}
+    slices = {qrtn.z + 1, qrtn.z - 1}
+    adjacent = {Qrtn(s, qrtn.c) for s in slices}
+    adjacent |= {Qrtn(qrtn.z, i) for i in get_adjacent_with_diag(qrtn.c)}
     for s in slices:
         for a in adj:
-            adjacent.add(Qrtn(s,a))
+            adjacent.add(Qrtn(s, a))
     return adjacent
+
 
 def get_adjacent_2(qrtn):
     adj = get_adjacent_with_diag(qrtn.c)
     slices = get_adjacent_with_diag(qrtn.z)
-    adjacent = {Qrtn(s,qrtn.c) for s in slices}
-    adjacent |= {Qrtn(qrtn.z,i) for i in get_adjacent_with_diag(qrtn.c)}
+    adjacent = {Qrtn(s, qrtn.c) for s in slices}
+    adjacent |= {Qrtn(qrtn.z, i) for i in get_adjacent_with_diag(qrtn.c)}
     for s in slices:
         for a in adj:
-            adjacent.add(Qrtn(s,a))
+            adjacent.add(Qrtn(s, a))
     adjacent.discard(qrtn)
     return adjacent
 
 
 def parse_input():
-    f = open_file(day,year)
+    f = open_file(day, year)
     # f=TESTSTRING.split('\n')
-    inputs=[]
-    for i,j in enumerate(f):
-        for k,l in enumerate(j):
-            if l =="#":
-                inputs.append(Qrtn(0,complex(k,-i)))
+    inputs = []
+    for i, j in enumerate(f):
+        for k, l in enumerate(j):
+            if l == "#":
+                inputs.append((k, -i))
 
     return set(inputs)
 
-def run1(data,cycles,get_adj):
-    actives = data.copy()
+
+def get_ranges(d):
+    return [[i + j for j in range(-1, 2)] for i in d]
+
+
+def get_adj(d):
+    ranges = get_ranges(d)
+
+    adj = set(itertools.product(*ranges))
+    adj.remove(d)
+    return adj
+
+def run1(data, cycles, dims):
+    actives = {i + (0,) * (dims - 2) for i in data}
     for r in range(cycles):
         new_actives = set()
-        adjs=set()
         for d in actives:
-
             adj = get_adj(d)
-            if 2<=len(adj & actives) <=3:
-              new_actives.add(d)
+            if 2 <= len(adj & actives) <= 3:
+                new_actives.add(d)
 
             for ad in adj:
                 if ad in actives:
                     continue
-                if adj in new_actives:
+                if ad in new_actives:
                     continue
                 if len(get_adj(ad) & actives) == 3:
                     new_actives.add(ad)
         actives = new_actives
     return len(actives)
+
 
 def run2(data):
     pass
@@ -94,8 +108,8 @@ def run2(data):
 if __name__ == "__main__":
     a = time.time()
     inputs = parse_input()
-    f = run1(inputs,6,get_adjacent)
-    g = run1(inputs,6,get_adjacent_2)
+    f = run1(inputs, cycles=6, dims=3)
+    g = run1(inputs, cycles=6, dims=4)
     print(f"Part 1: {f}")
     print(f"Part 2: {g}")
     print(f"Runtime: {round((time.time() - a)*1000,3)}ms")
