@@ -12,52 +12,6 @@ TESTSTRING = """.#.
 STRING = """"""
 
 
-class Qrtn:
-    def __init__(self, slice, c):
-        self.z = slice
-        self.c = c
-
-    def __repr__(self):
-        return f"{self.z},{self.x},{self.y}"
-
-    @property
-    def x(self):
-        return self.c.real
-
-    @property
-    def y(self):
-        return self.c.imag
-
-    def __eq__(self, o):
-        return self.c == o.c and self.z == o.z
-
-    def __hash__(self):
-        return hash((self.z, self.c))
-
-
-def get_adjacent(qrtn):
-    adj = get_adjacent_with_diag(qrtn.c)
-    slices = {qrtn.z + 1, qrtn.z - 1}
-    adjacent = {Qrtn(s, qrtn.c) for s in slices}
-    adjacent |= {Qrtn(qrtn.z, i) for i in get_adjacent_with_diag(qrtn.c)}
-    for s in slices:
-        for a in adj:
-            adjacent.add(Qrtn(s, a))
-    return adjacent
-
-
-def get_adjacent_2(qrtn):
-    adj = get_adjacent_with_diag(qrtn.c)
-    slices = get_adjacent_with_diag(qrtn.z)
-    adjacent = {Qrtn(s, qrtn.c) for s in slices}
-    adjacent |= {Qrtn(qrtn.z, i) for i in get_adjacent_with_diag(qrtn.c)}
-    for s in slices:
-        for a in adj:
-            adjacent.add(Qrtn(s, a))
-    adjacent.discard(qrtn)
-    return adjacent
-
-
 def parse_input():
     f = open_file(day, year)
     # f=TESTSTRING.split('\n')
@@ -77,9 +31,9 @@ def get_ranges(d):
 def get_adj(d):
     ranges = get_ranges(d)
 
-    adj = set(itertools.product(*ranges))
-    adj.remove(d)
+    adj = list(itertools.product(*ranges))
     return adj
+
 
 def run1(data, cycles, dims):
     actives = {i + (0,) * (dims - 2) for i in data}
@@ -87,7 +41,8 @@ def run1(data, cycles, dims):
         new_actives = set()
         for d in actives:
             adj = get_adj(d)
-            if 2 <= len(adj & actives) <= 3:
+            count = sum(1 for i in adj if i in actives)
+            if 3 <= count <= 4:
                 new_actives.add(d)
 
             for ad in adj:
@@ -95,7 +50,8 @@ def run1(data, cycles, dims):
                     continue
                 if ad in new_actives:
                     continue
-                if len(get_adj(ad) & actives) == 3:
+                count = sum(1 for i in get_adj(ad) if i in actives)
+                if count == 3:
                     new_actives.add(ad)
         actives = new_actives
     return len(actives)
