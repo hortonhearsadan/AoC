@@ -48,10 +48,7 @@ def run1(data):
         for ing in d.ingredients:
             counts[ing] += 1
 
-    sus_ingredients = set()
-    for p in possible.values():
-        sus_ingredients |= p
-
+    sus_ingredients = set(itertools.chain(*possible.values()))
     safe_ingredients = all_ingredients - sus_ingredients
 
     part1 = sum(counts[safe] for safe in safe_ingredients)
