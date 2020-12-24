@@ -2,6 +2,7 @@ import time
 from collections import deque, defaultdict
 
 from utils import open_file
+
 dir_path = __file__.split("/")
 day = int(dir_path[-1][3:-3])
 year = int(dir_path[-2])
@@ -49,7 +50,7 @@ def parse_input():
             d = l.popleft()
             if d in {"s", "n"}:
                 d += l.popleft()
-            tiles.append(d)
+            tiles.append(directions[d])
         inputs.append(tiles)
 
     return inputs
@@ -58,7 +59,7 @@ def parse_input():
 def run1(data):
     tile_flips = defaultdict(int)
     for d in data:
-        pos = sum(directions[t] for t in d)
+        pos = sum(d)
         tile_flips[pos] += 1
 
     return {k for k, v in tile_flips.items() if v % 2 == 1}
