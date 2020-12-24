@@ -61,15 +61,14 @@ def run1(data):
         pos = sum(directions[t] for t in d)
         tile_flips[pos] += 1
 
-    return tile_flips
+    return {k for k, v in tile_flips.items() if v % 2 == 1}
 
 
 def get_adj_tiles(t):
     return {t - 1, t + 1, t + 0.5 - 1j, t + 0.5 + 1j, t - 0.5 + 1j, t - 0.5 - 1j}
 
 
-def run2(tile_flips):
-    black_tiles = {k for k, v in tile_flips.items() if v % 2 == 1}
+def run2(black_tiles):
 
     for i in range(1, 101):
         new_black_tiles = set()
@@ -97,6 +96,6 @@ if __name__ == "__main__":
     inputs = parse_input()
     f = run1(inputs)
     g = run2(f)
-    print(f"Part 1: {sum(v %2 for v in f.values())}")
+    print(f"Part 1: {len(f)}")
     print(f"Part 2: {g}")
     print(f"Runtime: {round((time.time() - a)*1000,3)}ms")
