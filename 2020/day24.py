@@ -58,9 +58,7 @@ def parse_input():
 def run1(data):
     tile_flips = defaultdict(int)
     for d in data:
-        pos = 0
-        for t in d:
-            pos += directions[t]
+        pos = sum(directions[t] for t in d)
         tile_flips[pos] += 1
 
     return tile_flips
