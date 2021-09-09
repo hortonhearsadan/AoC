@@ -38,7 +38,6 @@ class State(Enum):
     TERMINATES = "terminates"
     INFINITE_LOOP = "loop"
 
-
 ### FANCY START ####
 class GameConsole:
     def __init__(self, instructions):
