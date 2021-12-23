@@ -22,27 +22,28 @@ B = "B"
 C = "C"
 D = "D"
 
-BOARD1 = [
-    (0, 0),
-    (1, 0),
-    (2, 0),
-    (3, 0),
-    (4, 0),
-    (5, 0),
-    (6, 0),
-    (7, 0),
-    (8, 0),
-    (9, 0),
-    (10, 0),
-    (2, 1),
-    (2, 2),
-    (4, 1),
-    (4, 2),
-    (6, 1),
-    (6, 2),
-    (8, 1),
-    (8, 2),
-]
+# BOARD1 = [
+#     (0, 0),
+#     (1, 0),
+#     (2, 0),
+#     (3, 0),
+#     (4, 0),
+#     (5, 0),
+#     (6, 0),
+#     (7, 0),
+#     (8, 0),
+#     (9, 0),
+#     (10, 0),
+#     (2, 1),
+#     (2, 2),
+#     (4, 1),
+#     (4, 2),
+#     (6, 1),
+#     (6, 2),
+#     (8, 1),
+#     (8, 2),
+# ]
+
 PIECES1 = [(A, 1), (A, 2), (B, 1), (B, 2), (C, 1), (C, 2), (D, 1), (D, 2)]
 FINISHED = {A: 2, B: 4, C: 6, D: 8}
 COSTS = {A: 1, B: 10, C: 100, D: 1000}
@@ -52,25 +53,21 @@ ROOM_CAPACITY = 2
 
 def parse_input():
     # f = open_file(day,year)
-    f = STRING.split("\n")
+    f = TESTSTRING.split("\n")
     starting_positions = {}
-    for i, c in enumerate(f[2]):
-        if c in ("#", " "):
-            continue
-        else:
-            if (c, 1) in starting_positions.keys():
-                starting_positions[(c, 2)] = (i - 1, 1)
-            else:
-                starting_positions[(c, 1)] = (i - 1, 1)
 
-    for i, c in enumerate(f[3]):
-        if c in ("#", " "):
-            continue
-        else:
-            if (c, 1) in starting_positions.keys():
-                starting_positions[(c, 2)] = (i - 1, 2)
+    for j in range(ROOM_CAPACITY):
+
+        for i, c in enumerate(f[2 + j]):
+            if c in ("#", " "):
+                continue
             else:
-                starting_positions[(c, 1)] = (i - 1, 2)
+                for k in range(1, ROOM_CAPACITY + 1):
+                    if (c, k) in starting_positions.keys():
+                        continue
+                    else:
+                        starting_positions[(c, k)] = (i - 1, j + 1)
+                        break
 
     return starting_positions
 
@@ -164,6 +161,21 @@ def run1(positions):
     print(min(completed_costs))
 
 
+def get_best_valid_moves(all_valid_moves):
+    best_moves = {
+        k: [move for move in moves if move[1] > 0]
+        for k, moves in all_valid_moves.items()
+    }
+    if any(v for v in best_moves.values()):
+        for k, v in best_moves.items():
+            if not v:
+                continue
+            best_moves[k] = sorted([m for m in v], key=lambda x: -x[1])[:1]
+        return best_moves
+    else:
+        return all_valid_moves
+
+
 def go(positions, turns, costs, completions, completed_costs):
     if completions and costs >= min(completed_costs):
         # print(turns)
@@ -177,20 +189,8 @@ def go(positions, turns, costs, completions, completed_costs):
         return
 
     all_valid_moves = get_valid_moves(positions)
-    best_moves = {
-        k: [move for move in moves if move[1] > 0]
-        for k, moves in all_valid_moves.items()
-    }
-    if any(v for v in best_moves.values()):
-        for k, v in best_moves.items():
-            if not v:
-                continue
-            best_moves[k] = sorted([m for m in v], key=lambda x: -x[1])[:1]
-        next_moves = best_moves
 
-    else:
-        next_moves = all_valid_moves
-
+    next_moves = get_best_valid_moves(all_valid_moves)
     for k, moves in next_moves.items():
         for m in moves:
             new_positions = copy(positions)
