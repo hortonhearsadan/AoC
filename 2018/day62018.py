@@ -92,7 +92,7 @@ def run1():
     # happily scipy.spatial.distance has cityblock (or manhatten) distance out
     # of the box
     cityblock = distance.cdist(points, targets, metric='cityblock')
-    # the resulting array is an input points x target points array
+    # the resulting array is an inputs points x target points array
     # so get the index of the maximum along axis 0 to tie each target coordinate
     # to closest ID
     closest_origin = np.argmin(cityblock, axis=0)

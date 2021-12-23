@@ -115,4 +115,4 @@ def iterate(input):
                 print(time.time() - a)
                 return
 
-# iterate(input)
+# iterate(inputs)
