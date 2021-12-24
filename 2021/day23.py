@@ -9,11 +9,21 @@ year = int(dir_path[-2])
 TESTSTRING = """#############
 #...........#
 ###B#C#B#D###
+  #D#C#B#A#
+  #D#B#A#C#
   #A#D#C#A#
   #########"""
 STRING = """#############
 #...........#
 ###A#D#A#C###
+  #C#D#B#B#
+  #########"""
+
+STRING1 = """#############
+#...........#
+###A#D#A#C###
+  #D#C#B#A#
+  #D#B#A#C#
   #C#D#B#B#
   #########"""
 
@@ -48,12 +58,14 @@ PIECES1 = [(A, 1), (A, 2), (B, 1), (B, 2), (C, 1), (C, 2), (D, 1), (D, 2)]
 FINISHED = {A: 2, B: 4, C: 6, D: 8}
 COSTS = {A: 1, B: 10, C: 100, D: 1000}
 ROOM_ENTRACES = [(2, 0), (4, 0), (6, 0), (8, 0)]
-ROOM_CAPACITY = 2
+# ROOM_CAPACITY = 2
+ROOM_CAPACITY = 4
 
 
 def parse_input():
     # f = open_file(day,year)
-    f = TESTSTRING.split("\n")
+    # f = STRING.split("\n")
+    f = STRING1.split("\n")
     starting_positions = {}
 
     for j in range(ROOM_CAPACITY):
@@ -73,11 +85,13 @@ def parse_input():
 
 
 def is_piece_in_room(k, v):
-    return v[1] in (1, 2)
+    return v[1] in list(range(ROOM_CAPACITY + 1))
 
 
 def get_non_blocked_hallway(k, v, positions):
-    if v[1] == 2 and (v[0], 1) in positions.values():
+    # if v[1] == 2 and (v[0], 1) in positions.values():
+    if any((v[0], i) in positions.values() for i in range(v[1])):
+
         return []
     left = []
     for i in range(v[0], -1, -1):
@@ -216,14 +230,15 @@ def is_finished(positions):
 def is_piece_finished(piece, position, positions):
     if FINISHED[piece[0]] != position[0]:
         return False
-    if position[1] == 2:
+    if position[1] == ROOM_CAPACITY:
         return True
 
-    p = (position[0], 2)
-    ks = [k for k, v in positions.items() if v == p]
+    ps = [(FINISHED[piece[0]], i) for i in range(1, ROOM_CAPACITY + 1)]
+
+    ks = [k for k, v in positions.items() if v in ps]
     if not ks:
         return False
-    elif ks[0][0] == piece[0]:
+    elif all(ks[i][0] == piece[0] for i in range(len(ks))):
         return True
     return False
 
